@@ -7,60 +7,216 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+# API Timesheet
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+API para gestión y registro de horas trabajadas desarrollada con Laravel.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Descripción
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Este proyecto implementa una API RESTful para el manejo de registros de tiempo y control de horas. La API permite a los usuarios registrar sus horas de trabajo y otros tipos de actividades, consultar resúmenes de tiempo, y administrar sus registros de horas.
 
-## Learning Laravel
+## Características principales
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Registro de horas de trabajo y otros tipos de actividades
+- Consulta de registros por fechas y tipos de actividad
+- Cálculo automático de totales de tiempo
+- Formateado de tiempo en formato legible (ej: "8h 30min")
+- Documentación API con Swagger/OpenAPI
+- Autenticación mediante tokens JWT/Sanctum
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Tecnologías utilizadas
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP 8.x
+- Laravel Framework
+- MySQL/PostgreSQL
+- Eloquent ORM
+- Laravel Sanctum/JWT para autenticación
+- OpenAPI/Swagger para documentación de API
 
-## Laravel Sponsors
+## Requisitos
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- PHP >= 8.0
+- Composer
+- MySQL, PostgreSQL u otro sistema de base de datos compatible
+- Extensiones PHP requeridas por Laravel
 
-### Premium Partners
+## Instalación
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+1. Clona el repositorio:
 
-## Contributing
+   ```
+   git clone https://github.com/Alejo-Santis/api-timesheet.git
+   cd api-timesheet
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2. Instala las dependencias:
 
-## Code of Conduct
+   ```
+   composer install
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+3. Configura las variables de entorno:
 
-## Security Vulnerabilities
+   ```
+   cp .env.example .env
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+   Edita el archivo `.env` con tus configuraciones de base de datos y otros parámetros necesarios
 
-## License
+4. Genera la clave de la aplicación:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+   ```
+   php artisan key:generate
+   ```
+
+5. Ejecuta las migraciones:
+
+   ```
+   php artisan migrate
+   ```
+
+6. Opcional: Ejecuta los seeders para datos iniciales:
+
+   ```
+   php artisan db:seed
+   ```
+
+7. Inicia el servidor de desarrollo:
+
+   ```
+   php artisan serve
+   ```
+
+## Estructura del proyecto
+
+El proyecto sigue la estructura estándar de Laravel con algunos componentes específicos:
+
+```
+api-timesheet/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   └── TimesheetController.php  # Controlador principal para gestión de horas
+│   │   ├── Requests/
+│   │   │   └── StoreTimesheetRequest.php  # Validación para la creación de registros
+│   │   └── Resources/
+│   │       └── TimesheetResource.php  # Transformación de datos para la API
+│   ├── Models/
+│   │   └── Timesheet.php  # Modelo Eloquent para registros de horas
+│   └── Service/
+│       └── TimesheetService.php  # Lógica de negocio para cálculos de horas
+├── routes/
+│   └── api.php  # Definición de rutas de la API
+└── ...
+```
+
+## API Endpoints
+
+La API proporciona los siguientes endpoints para la gestión de registros de horas:
+
+### Timesheets
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/timesheets` | Listar todos los registros de horas del usuario autenticado (con filtros opcionales) |
+| POST | `/api/timesheets` | Crear un nuevo registro de horas |
+| GET | `/api/timesheets/total` | Obtener total de minutos acumulados por tipo de actividad |
+| GET | `/api/timesheets/{id}` | Mostrar un registro específico |
+| PUT | `/api/timesheets/{id}` | Actualizar un registro existente |
+| DELETE | `/api/timesheets/{id}` | Eliminar un registro |
+
+### Parámetros de filtrado
+
+Para el endpoint `GET /api/timesheets` y `GET /api/timesheets/total` se pueden utilizar los siguientes parámetros de filtrado:
+
+- `type`: Filtrar por tipo de actividad (por defecto: "work")
+- `from`: Fecha de inicio para filtrar registros (formato YYYY-MM-DD)
+- `to`: Fecha de fin para filtrar registros (formato YYYY-MM-DD)
+
+## Estructura de datos
+
+### Modelo Timesheet
+
+El modelo principal de la aplicación es `Timesheet` que representa un registro de horas:
+
+```php
+/**
+ * @OA\Schema(
+ *   schema="Timesheet",
+ *   required={"type", "start_time"},
+ *   @OA\Property(property="id", type="integer", format="int64"),
+ *   @OA\Property(property="user_id", type="integer"),
+ *   @OA\Property(property="type", type="string", example="work"),
+ *   @OA\Property(property="start_time", type="string", format="date-time"),
+ *   @OA\Property(property="end_time", type="string", format="date-time"),
+ *   @OA\Property(property="description", type="string"),
+ *   @OA\Property(property="created_at", type="string", format="date-time"),
+ *   @OA\Property(property="updated_at", type="string", format="date-time")
+ * )
+ */
+```
+
+## Documentación de la API
+
+La API está documentada utilizando OpenAPI/Swagger. Puedes acceder a la documentación completa en la ruta `/api/documentation` después de iniciar el servidor.
+
+Para generar la documentación, utiliza:
+
+```
+php artisan l5-swagger:generate
+```
+
+## Autenticación
+
+La API utiliza autenticación mediante tokens (JWT o Laravel Sanctum). Para acceder a los endpoints protegidos, es necesario incluir un token de autenticación en las cabeceras de la petición:
+
+```
+Authorization: Bearer {tu-token}
+```
+
+## Ejemplos de uso
+
+### Crear un nuevo registro de horas
+
+```bash
+curl -X POST "http://localhost:8000/api/timesheets" \
+  -H "Authorization: Bearer {tu-token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "work",
+    "start_time": "2023-05-10T09:00:00",
+    "end_time": "2023-05-10T17:30:00",
+    "description": "Desarrollo de nuevas funcionalidades"
+  }'
+```
+
+### Obtener total de horas trabajadas en un período
+
+```bash
+curl -X GET "http://localhost:8000/api/timesheets/total?type=work&from=2023-05-01&to=2023-05-31" \
+  -H "Authorization: Bearer {tu-token}"
+```
+
+## Desarrollo
+
+### Scripts disponibles
+
+- `php artisan serve` - Inicia el servidor de desarrollo
+- `php artisan test` - Ejecuta pruebas
+- `php artisan migrate:fresh --seed` - Recrea la base de datos con datos iniciales
+
+## Contribuir
+
+1. Crea un fork del repositorio
+2. Crea una rama para tu característica (`git checkout -b feature/amazing-feature`)
+3. Realiza tus cambios y haz commit (`git commit -m 'Add some amazing feature'`)
+4. Sube los cambios a tu fork (`git push origin feature/amazing-feature`)
+5. Abre un Pull Request
+
+## Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+
+## Autor
+
+Alejo Santis - [GitHub](https://github.com/Alejo-Santis)
